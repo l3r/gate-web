@@ -17,7 +17,7 @@ class AnnotationEditor
 			@addAnnotation(1)
 
 		@target.find(".deleteAnnotation").on "click", () =>
-			@viewer.removeAnnotation(@annotation)
+			@viewer.annotationDisplay.removeAnnotation(@annotation)
 
 
 
@@ -37,7 +37,7 @@ class AnnotationEditor
 		@annotation.indices[0] += amount
 		@annotation.indices[1] += amount
 
-		@display.invalidate(Math.min(@annotation.indices[0], oldLeft),
+		@viewer.annotationDisplay.invalidate(Math.min(@annotation.indices[0], oldLeft),
 							Math.max(@annotation.indices[1], oldRight))
 		@showAnnotation(@annotation, @display)
 
@@ -50,7 +50,7 @@ class AnnotationEditor
 		else
 			@annotation.indices[1] += amount
 
-		@display.invalidate(Math.min(@annotation.indices[0], oldLeft),
+		@viewer.annotationDisplay.invalidate(Math.min(@annotation.indices[0], oldLeft),
 							Math.max(@annotation.indices[1], oldRight))
 		@showAnnotation(@annotation, @display)
 

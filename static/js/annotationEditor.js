@@ -34,7 +34,7 @@ AnnotationEditor = (function() {
     })(this));
     this.target.find(".deleteAnnotation").on("click", (function(_this) {
       return function() {
-        return _this.viewer.removeAnnotation(_this.annotation);
+        return _this.viewer.annotationDisplay.removeAnnotation(_this.annotation);
       };
     })(this));
   }
@@ -60,7 +60,7 @@ AnnotationEditor = (function() {
     oldRight = this.annotation.indices[1];
     this.annotation.indices[0] += amount;
     this.annotation.indices[1] += amount;
-    this.display.invalidate(Math.min(this.annotation.indices[0], oldLeft), Math.max(this.annotation.indices[1], oldRight));
+    this.viewer.annotationDisplay.invalidate(Math.min(this.annotation.indices[0], oldLeft), Math.max(this.annotation.indices[1], oldRight));
     return this.showAnnotation(this.annotation, this.display);
   };
 
@@ -73,7 +73,7 @@ AnnotationEditor = (function() {
     } else {
       this.annotation.indices[1] += amount;
     }
-    this.display.invalidate(Math.min(this.annotation.indices[0], oldLeft), Math.max(this.annotation.indices[1], oldRight));
+    this.viewer.annotationDisplay.invalidate(Math.min(this.annotation.indices[0], oldLeft), Math.max(this.annotation.indices[1], oldRight));
     return this.showAnnotation(this.annotation, this.display);
   };
 
