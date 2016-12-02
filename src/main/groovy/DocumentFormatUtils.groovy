@@ -23,7 +23,8 @@ class DocumentFormatUtils {
                     [
                             startOffset: annotation.startNode.offset,
                             endOffset: annotation.endNode.offset,
-                            id: annotation.getId()
+                            id: annotation.getId(),
+                            annotationSet: asName
                     ]
                 }
                 [(asType): offsets]

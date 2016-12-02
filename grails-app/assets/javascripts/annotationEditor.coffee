@@ -8,6 +8,7 @@ class AnnotationEditor
 		@target.popover({
               selector: 'span[data-has-annotations=true]',
               html: true,
+              placement: "auto right",
               content: () ->
               	# Generate the HTML to select an annotation
               	editor.selectAnnotationHTML($(this).data("offset")) 
@@ -36,24 +37,62 @@ class AnnotationEditor
 			@viewer.annotationDisplay.removeAnnotation(@annotation)
 
 	selectAnnotationHTML: (offset) ->
-		result = $("<div class='annotationSelector'><h2>Please select an annotation to view</h2>
-			<ul class='annotationList'></ul></div>")
-		list = result.find(".annotationList")
-		for id, annotation of @display.annotationsAt[offset]
-			item = $("<li><a href='#'>#{id} #{annotation.type}</a></li>")
-			item.find("a").click annotation, (event) => @showAnnotation(event.data)
+		tooltipContainer = $("<div class='tooltipContainer'>
+						<div class='annotationSelector'>
+						<h2>Please select an annotation to view</h2>
+						<ul class='annotationList'></ul>
+						</div>
+					</div>")
 
-			list.append($(item))
+		annotations = @display.annotationsAt[offset]
+		if Object.keys(annotations).length == 1
+			for id, annotation of annotations
+				$.getJSON @document.endpoints.getAnnotation, 
+					{documentId: @document.id, annotationSet: annotation.annotationSet, id: annotation.id}, (data) =>
+						@showAnnotation(tooltipContainer, data)
+		else
+			list = tooltipContainer.find(".annotationList")
+			for id, annotation of @display.annotationsAt[offset]
+				item = $("<li><a href='#'>#{id} #{annotation.type}</a></li>")
+				item.find("a").click annotation, (event) => 
+					annotation = event.data
+					$.getJSON @document.endpoints.getAnnotation, 
+						{documentId: @document.id, annotationSet: annotation.annotationSet, id: annotation.id}, (data) =>
+							@showAnnotation(tooltipContainer, data)
 
-		return result
+				list.append($(item))
+
+		return tooltipContainer
 	
-	showAnnotation: (@annotation) =>
-		console.log("Showing annotation", @annotation)
-		@target.find(".annotationType").val(@annotation.type)
-		@target.find(".featureValues").empty()
-		for feature, value of @annotation
-			@target.find(".featureValues").append($.parseHTML("<tr><td>#{feature}</td><td>#{value}</td></tr>"))
+	showAnnotation: (tooltipContainer, annotation) =>
+		console.log("Showing annotation", annotation)
+		tooltipContainer.find(".annotationSelector").replaceWith(@showAnnotationHTML(annotation))
 
+	showAnnotationHTML: (annotation) =>
+		result = $("<div class='annotationEditor'><h2>Editing annotation:</h2>
+			<fieldset class='form'>
+				<label for='annotationType'>Annotation Type</label>
+				<input type='text' name='annotationType' value='#{annotation.type}' />
+			</fieldset>
+			<table class='featureTable'>
+				<tr> 
+					<th>Name</th><th>Value</th>
+				</tr>
+			</table>
+			<input type='button' class='submitAnnotation' name='Save' value='Save' class='btn pull-right' />
+			</div>")
+
+		table = result.find("table")
+
+		for featureName, value of annotation.features
+			table.append(
+				$("
+					<tr>
+						<td>#{featureName}</td>
+						<td>#{value}</td>
+					</tr>
+					"))
+		result
 	nudgeAnnotation: (amount) ->
 		oldLeft = @annotation.indices[0]
 		oldRight = @annotation.indices[1]

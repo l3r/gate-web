@@ -14,6 +14,21 @@ class AnnotationActions
 
 			offsets = range.toCharacterRange(@annotationDisplay.target.get(0))
 			if offsets.start != offsets.end
-				@document.addAnnotation(set, type, offsets.start, offsets.end)
+				annotation = {
+					type: type,
+					features: {},
+					annotationSet: set,
+					startOffset: offsets.start,
+					endOffset: offsets.end
+					documentId: @document.id
+				}
+
+				@target.find("#detailsForm").replaceWith(annotationEditor.showAnnotationHTML(annotation))
+				@target.find(".submitAnnotation").on "click", annotation, (event) =>
+					annotation = event.data
+
+					$.post @document.endpoints.addAnnotation, annotation, (data) =>
+						console.log(data)
+						@document.addAnnotation(data)
 
 window.AnnotationActions = AnnotationActions

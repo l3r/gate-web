@@ -97,18 +97,17 @@ class Document
 
 		$(this).triggerHandler("visibleAnnotations:changed")
 
-	addAnnotation: (annotationSet, annotationType, start, end) ->
-		if (!@annotationSets.hasOwnProperty(annotationSet))
-			@annotationSets[annotationSet] = {}
-		if (!@annotationSets[annotationSet].hasOwnProperty(annotationType))
-			@annotationSets[annotationSet][annotationType] = []
+	addAnnotation: (a) ->
+		if (!@annotationSets.hasOwnProperty(a.annotationSet))
+			@annotationSets[a.annotationSet] = {}
+		if (!@annotationSets[a.annotationSet].hasOwnProperty(a.type))
+			@annotationSets[a.annotationSet][a.type] = []
 
-		@annotationSets[annotationSet][annotationType].push({startOffset: start, endOffset: end})
-		console.log(@annotationSets[annotationSet][annotationType])
+		@annotationSets[a.annotationSet][a.type].push(a)
 		
-		if !@_visibleAnnotations.hasOwnProperty(annotationSet)
-				@_visibleAnnotations[annotationSet] = {}
-			@_visibleAnnotations[annotationSet][annotationType] = true
+		if !@_visibleAnnotations.hasOwnProperty(a.annotationSet)
+				@_visibleAnnotations[a.annotationSet] = {}
+			@_visibleAnnotations[a.annotationSet][a.type] = true
 
 		$(this).triggerHandler("annotations:changed")
 

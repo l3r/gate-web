@@ -10,26 +10,24 @@
         $(document).ready(function() {
             var endpoints = new Endpoints(
                     '${g.createLink(action:"show").encodeAsJavaScript()}',
+                    '${g.createLink(controller: "annotation", action:"get").encodeAsJavaScript()}',
                     '${g.createLink(controller: "annotation", action:"save").encodeAsJavaScript()}',
                     '${g.createLink(controller: "annotation", action:"remove").encodeAsJavaScript()}',
                     '${g.createLink(controller: "annotation", action:"update").encodeAsJavaScript()}'
                 );
 
-            $( "#actionAccordion" ).accordion({
-                heightStyle: "content"
-            });
 
             window.doc = new Document(endpoints, ${document.id}, function(doc) {
                 window.annotationDisplay = new AnnotationDisplay($("#docView"), doc);
                 window.annotationSelector = new AnnotationSelector($("#annotationSelector"), doc)
-                window.annotationActions = new AnnotationActions($("#actionAccordion"), window.annotationDisplay, doc)
-                window.annotationEditor = new AnnotationEditor($("#docView"), window.annotationDisplay, doc)
+                window.annotationActions = new AnnotationActions($("#annotationAdd"), window.annotationDisplay, doc)
+                window.annotationEditor = new AnnotationEditor($("#docView"), window.annotationDisplay,doc)
             });
         });
     </asset:script>
     <div class="container">
             <div class="row">
-                <div class="col-md-8" id="actionAccordion">
+                <div class="col-md-8" >
                     <h1>Add annotation</h1>
                     <div id="annotationAdd">
                         <g:form action="#" id="addAnnotationForm">
@@ -41,46 +39,9 @@
 
                             <g:field type="button" name="add" value="Add" class="createAnnotation">Add</g:field> 
                         </g:form>
+
+                        <div id='detailsForm' />
                     </div>
-                    <h1>Select annotation</h1>
-
-                    <div id="selectAnnotation">
-<!--                                 <div class="col-md-6">
-                                    <label for="annotationType">Annotation Type</label> <input class="annotationType form-control" type="text" id="annotationType" name="annotationType">
-
-                                    <label>Nudge Annotation</label> <br>
-                                    <button class="btn btn-default nudgeLeftEdge" aria-label="Nudge Left Edge">
-                                        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-                                    </button>
-
-                                    <button class="btn btn-default nudgeRightEdge" aria-label="Nudge Right Edge" >
-                                        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-                                    </button>
-
-                                    <button class="btn btn-default nudgeLeft" aria-label="Nudge Left Edge" >
-                                        <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
-                                    </button>
-
-                                    <button class="btn btn-default nudgeRight" aria-label="Nudge Right Edge">
-                                        <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
-                                    </button>
-                                    <button class="btn btn-default deleteAnnotation" aria-label="Delete Annotation">
-                                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                                    </button>
-
-                                    <button class="btn btn-default createAnnotation" aria-label="Create Annotation">
-                                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                                    </button>
-                                </div>
-                                <div class="col-md-6">
-                                    <table class="featureValues"></table>
-                                </div> -->
-                    </div>
-
-                    <h1>Edit annotation</h1>
-                    <div id="editAnnotation">
-                    </div>
-
                 </div>
             </div>
             <div class="row">
