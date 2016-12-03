@@ -15,43 +15,21 @@ class AnnotationDisplay
     @setDocument(@document)
 
   setDocument: (@document) ->
-    @colourField = [0..@document.text.length].map -> [255,255,255, 1]
-    @annotationsAt = [0..@document.text.length].map -> {}
-
     $(@document).on("visibleAnnotations:changed", @updateAnnotations.bind(this))
     @typeColours = {}
     @updateAnnotations()
 
   updateAnnotations: () ->
     # Just regenerate everything
-    @updateColourField()
+    @document.colourMap.update(@document.getVisibleAnnotations())
     @spans = @generateSpansInRange()
     @spans = @renderSpans(@spans, @document.text)
 
     @update()
 
       
-  combineAlpha: (a, b) ->
-    ### Combines two colours, appying alpha channel ###
-    out = [0,0,0,0]
-    alpha = a[3] + b[3]*(1-a[3])
-    out[3] = alpha
-    for c in [0,1,2]
-      out[c] = Math.floor((a[c]*a[3]+b[c]*b[3]*(1-a[3]))/alpha)
-    return out
-  
-  updateColourField: (start = null, end = null) -> # TODO: Limit this to a certain range if possible
-    @colourField = [0..@document.text.length].map -> [255,255,255, 0]
-    @annotationsAt = [0..@document.text.length].map -> {}
-
-    ### Calculates the colours at each offset in the document ###
-    for annotation in @document.getVisibleAnnotations() 
-      for offset in [annotation.startOffset..(annotation.endOffset-1)]
-        @colourField[offset] = @combineAlpha(annotation.colour, @colourField[offset])
-        @annotationsAt[offset][annotation.id] = annotation
-
   invalidate: (left, right) ->
-    @updateColourField(left, right)
+    @document.colourMap.update(@document.getVisibleAnnotations())
 
     # Find our spans that the annotation covers
     span_range = @findSpanRange(left, right)
@@ -76,15 +54,15 @@ class AnnotationDisplay
   generateSpansInRange: (start = null, end = null) ->
     ### Returns the ranges for each colour area ###
     start = if start == null then 0 else start
-    end = if end == null then @colourField.length-1 else end
+    end = if end == null then @document.colourMap.colourField.length-1 else end
     
     lastOffset = start
-    lastColour = @colourField[lastOffset]
-    lastAnnotations = @annotationsAt[lastOffset]
+    lastColour = @document.colourMap.colourField[lastOffset]
+    lastAnnotations = @document.colourMap.annotationsAt[lastOffset]
     spans = []
     for offset in [start..end]
-      colour = @colourField[offset]
-      annotations = @annotationsAt[offset]
+      colour = @document.colourMap.colourField[offset]
+      annotations = @document.colourMap.annotationsAt[offset]
       if !_.isEqual(lastAnnotations, annotations)
         spans.push {
           start: lastOffset
@@ -94,13 +72,13 @@ class AnnotationDisplay
         }
         lastColour = colour
         lastOffset = offset
-        lastAnnotations = @annotationsAt[offset]
+        lastAnnotations = @document.colourMap.annotationsAt[offset]
 
     spans.push {
         start: lastOffset
         end: end
         colour: lastColour
-        annotations: @annotationsAt[end-1]
+        annotations: @document.colourMap.annotationsAt[end-1]
       }
 
     return spans
@@ -143,6 +121,7 @@ class AnnotationDisplay
     result = []
 
     for span in spans
+
       # Construct a node for the annotation.
       text = @document.text[span.start..span.end]
 
@@ -153,7 +132,7 @@ class AnnotationDisplay
       spanNode = $("<span data-has-annotations='#{hasAnnotations}' data-offset='#{span.start}'>").append(textNodes).get(0)
 
       if hasAnnotations
-        spanNode.style["background-color"] = @document.makeColourString(colour)
+        spanNode.style["background-color"] = @document.colourMap.makeColourString(colour)
       span = $.extend({}, span, {node: spanNode});
 
       @attachEvents(span)

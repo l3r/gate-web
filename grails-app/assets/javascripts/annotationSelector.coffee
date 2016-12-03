@@ -17,7 +17,7 @@ class AnnotationSelector
             $(annotationSelections).append("<h3>#{annotationSet || 'Default Set'}</h3>")
             for annotationType, typeAnnotations of setAnnotations
                 entry = $.parseHTML(
-                    "<label style='color: #{@document.makeColourString(@document.getTypeColour(annotationSet, annotationType, 1))}'>
+                    "<label style='color: #{@document.colourMap.makeColourString(@document.annotationTypeColourMap.getTypeColour(annotationSet, annotationType, 1))}'>
                         <input type='checkbox' name='annotations' value='#{annotationSet}:#{annotationType}'> #{annotationType}</label><br>")
 
                 if @document.isAnnotationVisible(annotationSet, annotationType)

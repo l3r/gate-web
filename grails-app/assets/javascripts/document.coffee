@@ -1,24 +1,4 @@
-colours = [[31 , 119, 180],
-	  [174, 199, 232],
-	  [255, 127, 14],
-	  [255, 187, 120],
-	  [44 , 160, 44],
-	  [152, 223, 138],
-	  [214, 39 , 40],
-	  [255, 152, 150],
-	  [148, 103, 189],
-	  [197, 176, 213],
-	  [140, 86 , 75],
-	  [196, 156, 148],
-	  [227, 119, 194],
-	  [247, 182, 210],
-	  [127, 127, 127],
-	  [199, 199, 199],
-	  [188, 189, 34],
-	  [219, 219, 141],
-	  [23 , 190, 207],
-	  [158, 218, 229]]
-lastColourUsed = 0
+
 
 ID = () ->
 	
@@ -29,23 +9,24 @@ ID = () ->
 #	This object exists largely as a broker for events
 ###
 class Document
-
 	# Fetches the document for the current ID and sets fields accordingly.
 	# TODO: report error if document could not be fetched.
 	fetchDocument: (callback = ID) ->
 		$.getJSON @endpoints.getDocumentAnnotations, {id: @id}, (data) =>
+			@colourMap = new DocumentColourMap(data.text.length)
 			@text = data.text
 			@name = data.name
 			@annotationSets = data.annotationSets
 			@_visibleAnnotations = {}
-			@typeColours = {}
+			
 			callback(@)
 
 	constructor: (@endpoints, @id, callback = ID) ->
 		# Data structure for annotations changing implies the display has changed too.
-		$(@).on("annotations:changed", () => $(@).triggerHandler("visibleAnnotations:changed"))
-
 		@fetchDocument(callback)
+		$(@).on("annotations:changed", () => $(@).triggerHandler("visibleAnnotations:changed"))
+		@colourMap = new DocumentColourMap(0)
+		@annotationTypeColourMap = new AnnotationTypeColourMap()
 
 	isAnnotationVisible: (annotationSet, annotationType) ->
 		return @_visibleAnnotations.hasOwnProperty(annotationSet) and
@@ -58,31 +39,12 @@ class Document
 			for annotationType, typeAnnotations of setAnnotations
 				if @isAnnotationVisible(annotationSet, annotationType)
 					for annotation in typeAnnotations
-						annotation.colour = @getTypeColour(annotationSet, annotationType)
+						annotation.colour = @annotationTypeColourMap.getTypeColour(annotationSet, annotationType)
 						annotation.type = annotationType
 						annotations.push(annotation)
 
 		return annotations
 
-	makeColourString: (colour) ->
-	    "rgba(#{Math.floor(colour[0])}, #{Math.floor(colour[1])}, #{Math.floor(colour[2])}, #{colour[3]})"
-
-	getTypeColour: (annotationSet, type, alpha=0.3) ->
-		### 
-		  Generates a colour for the given type, or retrieves it if there already is one.
-		###
-		key = "#{annotationSet}:#{type}"
-		if @typeColours.hasOwnProperty(key)
-			return [@typeColours[key]..., alpha]
-		else 
-			colour = colours[lastColourUsed] 
-			lastColourUsed += 1
-			if lastColourUsed == colours.length
-				lastColourUsed = 0
-
-			@typeColours[key] = colour
-
-			return [colour..., alpha]
 
 	showAnnotations: (keys) ->
 		@_visibleAnnotations = {}

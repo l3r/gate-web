@@ -44,7 +44,7 @@ class AnnotationEditor
 						</div>
 					</div>")
 
-		annotations = @display.annotationsAt[offset]
+		annotations = @document.colourMap.annotationsAt[offset]
 		if Object.keys(annotations).length == 1
 			for id, annotation of annotations
 				$.getJSON @document.endpoints.getAnnotation, 
@@ -52,7 +52,7 @@ class AnnotationEditor
 						@showAnnotation(tooltipContainer, data)
 		else
 			list = tooltipContainer.find(".annotationList")
-			for id, annotation of @display.annotationsAt[offset]
+			for id, annotation of @document.colourMap.annotationsAt[offset]
 				item = $("<li><a href='#'>#{id} #{annotation.type}</a></li>")
 				item.find("a").click annotation, (event) => 
 					annotation = event.data
