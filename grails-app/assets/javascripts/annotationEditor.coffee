@@ -85,13 +85,26 @@ class AnnotationEditor
 		table = result.find("table")
 
 		for featureName, value of annotation.features
-			table.append(
-				$("
+			newRow = $("
 					<tr>
 						<td>#{featureName}</td>
-						<td>#{value}</td>
+						<td><a class='editableValue'>#{value}</a></td>
 					</tr>
-					"))
+					")
+			newRow.find("a.editableValue").editable {
+                           type:  'text',
+                           params:    {
+                           			"documentId": @document.id, 
+                           			"annotationSet": annotation.annotationSet,
+                           			"annotationId": annotation.id
+                           		},
+                           pk: 1,
+                           name:  featureName,
+                           url:   @document.endpoints.saveFeature,
+                           title: 'Enter feature value'
+                        }
+
+			table.append(newRow)
 		result
 	nudgeAnnotation: (amount) ->
 		oldLeft = @annotation.indices[0]

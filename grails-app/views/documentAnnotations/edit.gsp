@@ -13,8 +13,10 @@
                     '${g.createLink(controller: "annotation", action:"get").encodeAsJavaScript()}',
                     '${g.createLink(controller: "annotation", action:"save").encodeAsJavaScript()}',
                     '${g.createLink(controller: "annotation", action:"remove").encodeAsJavaScript()}',
-                    '${g.createLink(controller: "annotation", action:"update").encodeAsJavaScript()}'
+                    '${g.createLink(controller: "annotation", action:"update").encodeAsJavaScript()}',
+                    '${g.createLink(controller: "feature", action:"save").encodeAsJavaScript()}'
                 );
+
 
 
             window.doc = new Document(endpoints, ${document.id}, function(doc) {

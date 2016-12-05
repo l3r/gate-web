@@ -12,6 +12,7 @@
 *= require grails
 *= require main
 *= require mobile
+*= require bootstrap3-editable/bootstrap-editable.css
 *= require_self
 */
 

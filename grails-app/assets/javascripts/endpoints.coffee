@@ -4,7 +4,8 @@ class Endpoints
 			@getAnnotation,
 			@addAnnotation,
 			@removeAnnotation,
-			@updateAnnotation
+			@updateAnnotation,
+		    @saveFeature
 		) ->
 
 window.Endpoints = Endpoints
