@@ -27,46 +27,39 @@
             });
         });
     </asset:script>
+
     <div class="container">
-            <div class="row">
-                <div class="col-md-8" >
-                    <h1>Add annotation</h1>
-                    <div id="annotationAdd">
-                        <g:form action="#" id="addAnnotationForm">
-                            <label for="type">Set</label>
-                            <g:textField name="type" class="annotationSet" />
-                            
-                            <label for="type">Type</label>
-                            <g:textField name="type" class="annotationType" />
+        <div class="row">
+            <div class="col-md-8" id="annotationAdd">
+                <h1>Add annotation</h1>
+                <g:form action="#" id="addAnnotationForm" class="form-inline">
 
-                            <g:field type="button" name="add" value="Add" class="createAnnotation">Add</g:field> 
-                        </g:form>
-
-                        <div id='detailsForm' />
+                    <div class="form-group">
+                        <label for="annotationSet">Annotation Set</label>
+                        <g:textField class="form-control" name="annotationSet" id="annotationSet" class="annotationSet" placeholder="Original markups" />
                     </div>
-                </div>
+                    <div class="form-group">
+                        <label for="annotationType">Annotation Type</label>
+                        <g:textField class="form-control" name="annotationType" id="annotationType" placeholder="Token" />
+                    </div>
+                    <g:field type="button" name="add" value="Add" class="createAnnotation btn btn-primary">Add</g:field>
+                </g:form>
             </div>
-            <div class="row">
-                <div class="col-md-8">
-                    <h2>Document Text</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            <h1>Document Text</h1>
 
-                    <div id="docView">
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <h2>Annotation Selector</h2>
-                    <div id="annotationSelector">
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <h2>Annotations at Cursor</h2>
-                    <div id="annotationInfo">
-                    </div>
-                </div>
+            <div id="docView">
             </div>
         </div>
 
+        <div class="col-md-4">
+            <h1>Annotation Selector</h1>
+            <div id="annotationSelector">
+            </div>
+        </div>
+    </div>
     </body>
 </html>
