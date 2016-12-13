@@ -1,9 +1,8 @@
 ///<reference path="../../lib/jquery.d.ts"/>
-
+import * as $ from "jquery";
 import {Endpoints} from "../endpoints";
 import {AnnotationSets} from "./annotationSets";
 import {ColourField} from "./colourField";
-import {ColourFieldView} from "../views/colourFieldView";
 interface DocumentLoadedCallback { (doc : Document) : void }
 
 /**
@@ -15,6 +14,7 @@ export class Document {
     private _name : string;
     private _text : string;
     private _colourField : ColourField;
+    private _id : number;
 
     // Goes to the required endpoint and fetches a document, returning it to callback.
     public static fromId(id : number, callback : DocumentLoadedCallback) {
@@ -27,9 +27,10 @@ export class Document {
 
     constructor(data) {
         // $(this).on("annotations:changed", () => $(this).triggerHandler("visibleAnnotations:changed"));
-        this._text = data._text;
-        this._name = data._name;
-        this._annotationSets = AnnotationSets.fromJson(data._annotationSets);
+        this._id = data.id;
+        this._text = data.text;
+        this._name = data.name;
+        this._annotationSets = AnnotationSets.fromJson(data.annotationSets);
         this._colourField = new ColourField(this._text.length, this._annotationSets);
     }
 
@@ -49,8 +50,9 @@ export class Document {
         return this._text;
     }
 
-    public getColourFieldView() : ColourFieldView {
-        return new ColourFieldView(this.text, this.colourField);
+
+    get id(): number {
+        return this._id;
     }
 }
 

@@ -16,7 +16,7 @@ class AnnotationController {
                 startOffset(annotation.startNode.offset)
                 endOffset(annotation.endNode.offset)
                 type annotation.type
-                delegate.annotationSet annotationSet
+                delegate.set annotationSet
                 delegate.id id
                 features doc.getAnnotations(annotationSet).get(id).features
             }
@@ -38,6 +38,15 @@ class AnnotationController {
                 delegate.features annotations.get(id).features
             }
 
+        }
+    }
+
+    def remove(Integer documentId, String set, String type, Integer id) {
+        Document docObj = Document.get(documentId)
+        docObj.withDocument { DocumentImpl doc ->
+            AnnotationSet annotations = doc.getAnnotations(set)
+            def toDelete = annotations.get(id);
+            annotations.remove(toDelete);
         }
     }
 }

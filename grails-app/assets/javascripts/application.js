@@ -5,8 +5,19 @@
 // You're free to add application-wide JavaScript to this file, but it's generally better
 // to create separate JavaScript files as needed.
 //
-//= require_tree .
+//= require lib/require
 //= require_self
+
+requirejs.config({ //this initiates the configuration
+    paths: {
+        jquery: '/assets/lib/jquery-2.2.0.min',
+        editing: '/assets/editing/bundle.js',
+        underscore: '/assets/lib/underscore',
+        bootstrap: '/assets/lib/bootstrap',
+        "bootstrap-editable": '/assets/lib/bootstrap3-editable/bootstrap-editable'
+
+    }
+});
 
 
 //

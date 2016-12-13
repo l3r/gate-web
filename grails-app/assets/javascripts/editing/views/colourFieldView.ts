@@ -1,4 +1,7 @@
 ///<reference path="../../lib/underscore.d.ts"/>
+import * as _ from "underscore";
+import * as $ from "jquery";
+
 import {Document} from "../data/document";
 import {Targets} from "../targets";
 import {Span} from "../data/span";
@@ -11,35 +14,46 @@ export class ColourFieldView {
     private colourField : ColourField;
     private viewer : JQuery;
     private spans : Array<Span>;
-    private jquerySpans;
-
     private text;
 
     /*
       Encapsulates the generation of the required DOM objects to show overlapping annotations
     */
-    constructor(text : string, colourField : ColourField) {
+    constructor(text : string, colourField : ColourField, target : string) {
         // Construct a bitmap representing each character with a different colour
         this.colourField = colourField;
-        this.viewer = $(Targets.getInstance().textField);
+        this.viewer = $(target);
         this.spans = new Array<Span>();
         this.text = text;
+        $(this.colourField).on("changed", (event, data) => {
+            if (data) {
+                this.invalidate(data.start, data.end);
+            } else {
+                this.updateAnnotations();
+            }
+        });
     }
 
+    public static create(document : Document, target:string) : ColourFieldView {
+        var result = new ColourFieldView(document.text, document.colourField, target);
+        result.updateAnnotations();
+        return result;
+    }
 
     public updateAnnotations() {
         // Just regenerate everything
-        this.colourField.update();
-
         this.spans = this.generateSpansInRange();
-
-        return this.update(this.renderSpans(this.spans));
+        this.renderSpans(this.spans);
+        return this.update();
     }
 
-    public invalidate(left, right) {
+    public invalidate(left : number = null, right : number = null) {
         var new_spans, old_spans, span_range, _ref;
-        this.colourField.update();
-
+        //this.colourField.update();
+        console.log(left, right)
+        if (left == null || right == null) {
+            return this.updateAnnotations();
+        }
         // Find our spans that the annotation covers
         span_range = this.findSpanRange(left, right);
 
@@ -88,7 +102,6 @@ export class ColourFieldView {
                 lastAnnotations = annotations;
             }
         }
-
         spans.push(new Span(lastOffset, end, lastColour, lastAnnotations));
 
         return spans;
@@ -100,17 +113,20 @@ export class ColourFieldView {
      * @param end
      * @returns {any}
      */
-    public findSpanRange(start, end) : Array<Span> {
+    public findSpanRange(start : number = null, end : number = null) : Array<Span> {
         var left, mid, right;
         if (this.spans === []) {
             return [];
+        }
+        if (start == null || end == null) {
+            return this.spans;
         }
 
         // First find the first node.
         left = 0;
         right = this.spans.length - 1;
         mid = Math.floor((left + right) / 2);
-        while (!(this.spans[mid].start >= start && this.spans[mid].start <= end) && left <= right) {
+        while (!(this.spans[mid].start >= start && this.spans[mid].start <= end) && left <= right && mid > -1) {
             if (this.spans[mid].start < start) {
                 left = mid + 1;
             } else {
@@ -118,6 +134,7 @@ export class ColourFieldView {
             }
             mid = Math.floor((left + right) / 2);
         }
+
 
         // Now search left until we see something that doesn't work.
         left = mid;
@@ -157,10 +174,7 @@ export class ColourFieldView {
             if (hasAnnotations) {
                 spanNode.style["background-color"] = colour.rgbString;
             }
-            span = $.extend({}, span, {
-                node: spanNode
-            });
-
+            span.node = spanNode
             this.attachEvents(span);
             return result.push(span);
         });
@@ -196,9 +210,9 @@ export class ColourFieldView {
         return _results;
     }
 
-    public update(spans) {
+    public update() {
         var nodes;
-        nodes = spans.map((span) => span.node);
+        nodes = this.spans.map((span) => span.node);
         this.viewer.empty();
         return this.viewer.append(nodes);
     }
@@ -212,5 +226,6 @@ export class ColourFieldView {
         right = annotation.indices[1];
         // Update the colour field
         return this.invalidate(left, right);
+
     }
 }

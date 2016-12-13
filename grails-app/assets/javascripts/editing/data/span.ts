@@ -12,6 +12,7 @@ export class Span {
     private _end: number
     private _colour: Colour
     private _annotations: Array<Annotation>
+    private _node : HTMLElement;
 
     constructor(start: number, end: number, colour: Colour, annotations: Array<Annotation>) {
         this._start = start;
@@ -37,5 +38,12 @@ export class Span {
         return this._annotations;
     }
 
-    addAnnotation
+
+    get node() : HTMLElement{
+        return this._node;
+    }
+
+    set node(value : HTMLElement) {
+        this._node = value;
+    }
 }

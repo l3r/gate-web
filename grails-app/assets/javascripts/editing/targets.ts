@@ -7,7 +7,7 @@ export class Targets {
     private static _instance:Targets = new Targets();
 
     public textField : string;
-    public annotationSetList : string;
+    public annotationSelector : string;
     public newAnnotationForm : string;
 
     public static getInstance():Targets {

@@ -7,24 +7,24 @@
     </head>
     <body>
     <asset:script>
-        $(document).ready(function() {
-            var endpoints = new Endpoints(
-                    '${g.createLink(action:"show").encodeAsJavaScript()}',
-                    '${g.createLink(controller: "annotation", action:"get").encodeAsJavaScript()}',
-                    '${g.createLink(controller: "annotation", action:"save").encodeAsJavaScript()}',
-                    '${g.createLink(controller: "annotation", action:"remove").encodeAsJavaScript()}',
-                    '${g.createLink(controller: "annotation", action:"update").encodeAsJavaScript()}',
-                    '${g.createLink(controller: "feature", action:"save").encodeAsJavaScript()}'
-                );
 
+        require(["editing", "jquery"],function(editing){
+            var endpoints = editing.Endpoints.getInstance()
 
+            endpoints.getDocumentAnnotations = '${g.createLink(action:"show").encodeAsJavaScript()}';
+            endpoints.getAnnotation = '${g.createLink(controller: "annotation", action:"get").encodeAsJavaScript()}';
+            endpoints.addAnnotation = '${g.createLink(controller: "annotation", action:"save").encodeAsJavaScript()}';
+            endpoints.removeAnnotation = '${g.createLink(controller: "annotation", action:"remove").encodeAsJavaScript()}';
+            endpoints.updateAnnotation = '${g.createLink(controller: "annotation", action:"update").encodeAsJavaScript()}';
+            endpoints.saveFeature = '${g.createLink(controller: "feature", action:"save").encodeAsJavaScript()}';
+            endpoints.saveFeatureName = '${g.createLink(controller: "feature", action:"saveName").encodeAsJavaScript()}';
 
-            window.doc = new Document(endpoints, ${document.id}, function(doc) {
-                window.annotationDisplay = new AnnotationDisplay($("#docView"), doc);
-                window.annotationSelector = new AnnotationSelector($("#annotationSelector"), doc)
-                window.annotationActions = new AnnotationActions($("#annotationAdd"), window.annotationDisplay, doc)
-                window.annotationEditor = new AnnotationEditor($("#docView"), window.annotationDisplay,doc)
-            });
+            var targets = editing.Targets.getInstance();
+
+            targets.textField = "#docView";
+            targets.annotationSelector = "#annotationSelector";
+            targets.newAnnotationForm = "#addAnnotationForm";
+            editing.start(${document.id});
         });
     </asset:script>
 

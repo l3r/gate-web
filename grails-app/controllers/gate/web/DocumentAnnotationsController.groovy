@@ -18,6 +18,7 @@ class DocumentAnnotationsController {
 
         document.withDocument { DocumentImpl doc ->
             render (contentType: "application/json") {
+                id params.id
                 name doc.getName()
                 text doc.getContent().toString()
                 annotationSets DocumentFormatUtils.exportAllAnnotations(doc)

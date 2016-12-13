@@ -36,7 +36,7 @@ class CreateBar {
 
                     return $.post(this.document.endpoints.addAnnotation, annotation, (data) => {
                         console.log(data);
-                        return this.document.addAnnotation(data);
+                        return this.document.addAnnotation(Annotation.fromJSON(data));
                     });
                 });
             }

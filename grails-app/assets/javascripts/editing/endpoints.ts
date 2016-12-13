@@ -13,6 +13,7 @@ export class Endpoints {
     public removeAnnotation : string;
     public updateAnnotation : string;
     public saveFeature : string;
+    public saveFeatureName : string;
 
     public static getInstance():Endpoints {
         return Endpoints._instance;

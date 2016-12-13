@@ -17,6 +17,9 @@ export class Colour {
         this._a = a;
     }
 
+    public static fromRGB(colour : [number, number, number]) {
+        return new Colour(colour[0], colour[1], colour[2], 1);
+    }
     public withAlpha(a: number) : Colour {
         return new Colour(this._r, this._g , this._b, a);
     }
@@ -39,7 +42,7 @@ export class Colour {
     }
 
     get rgbString(): string {
-        return "rgba(${this.r}, ${this.g}, ${this.b}, ${this.a})";
+        return `rgba(${this.r}, ${this.g}, ${this.b}, ${this.a})`;
     }
     public combineAlpha(other) : Colour {
         /* Combines two colours, appying alpha channel*/
@@ -56,5 +59,9 @@ export class Colour {
                 this.g == other.g &&
                 this.b == other.b &&
                 this.a == other.a;
+    }
+
+    public toString() {
+        return this.rgbString;
     }
 }
